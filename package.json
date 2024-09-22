@@ -1,6 +1,6 @@
 {
   "name": "nodejsexamples",
-  "version": "22.7.0",
+  "version": "18.18.2",
   "description": "This Project explains all Node JS examples",
   "main": "app.js",
   "publishConfig": {
@@ -22,7 +22,7 @@
     "sonarqube-scanner": "^2.9.1"
   },
   "engines": {
-    "node": "v22.7.0"
+    "node": "v18.18.2"
   },
   "repository": {
     "type": "git",
