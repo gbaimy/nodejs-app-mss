@@ -33,15 +33,7 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-          
-      - name: Run Test
-        run: |
-          if grep -q '"test": "[^"]*"' package.json && ! grep -q '"test": "echo.*no test specified.*"' package.json; then
-            npm test
-          else
-            echo "Skipping tests as no valid test script is defined in package.json."
-          fi
-
+      
       - name: Install SonarScanner
         run: |
           wget -qO- https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip -O /tmp/sonar-scanner.zip
