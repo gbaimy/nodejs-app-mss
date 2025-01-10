@@ -36,7 +36,11 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm test
+          if grep -q '"test":' package.json; then
+            npm test
+          else
+            echo "No tests defined in package.json, skipping test step."
+          fi
 
       - name: Install SonarScanner
         run: |
