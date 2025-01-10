@@ -58,8 +58,7 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://54.196.147.196:9000 \
             -Dsonar.login=$SONAR_TOKEN
-            
-      
+                 
       - name: Upload Node.js Artifact to Nexus
         env:
           NEXUS_URL: ${{ secrets.NEXUS_URL }}
