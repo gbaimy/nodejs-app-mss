@@ -33,13 +33,13 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-
+          
       - name: Run Tests
         run: |
-          if grep -q '"test":' package.json; then
+          if grep -q '"test": "[^"]*"' package.json && ! grep -q '"test": "echo.*no test specified.*"' package.json; then
             npm test
           else
-            echo "No tests defined in package.json, skipping test step."
+            echo "Skipping tests as no valid test script is defined in package.json."
           fi
 
       - name: Install SonarScanner
