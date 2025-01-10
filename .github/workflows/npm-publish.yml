@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-   
+
   pull_request:
     branches:
       - master
@@ -21,17 +21,15 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v3
-        
+
       - name: Install unzip
         run: sudo apt-get install -y unzip 
-      
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18.20.4
+
       - name: Install Dependencies
         run: |
           npm install
@@ -56,19 +54,18 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://54.196.147.196:9000 \
             -Dsonar.login=$SONAR_TOKEN
-                 
+
       - name: Upload Node.js Artifact to Nexus
         env:
           NEXUS_URL: ${{ secrets.NEXUS_URL }}
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          
         run: |
           ARTIFACT=$(ls *.tgz)
           curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \
           --upload-file $ARTIFACT \
           $NEXUS_URL/repository/your-repo-name/$ARTIFACT
 
-        - name: Run Node.js App
-          run: |
+      - name: Run Node.js App
+        run: |
           npm start
