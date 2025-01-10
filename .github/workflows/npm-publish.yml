@@ -34,7 +34,7 @@ jobs:
         run: |
           npm install
           
-      - name: Run Tests
+      - name: Run Test
         run: |
           if grep -q '"test": "[^"]*"' package.json && ! grep -q '"test": "echo.*no test specified.*"' package.json; then
             npm test
