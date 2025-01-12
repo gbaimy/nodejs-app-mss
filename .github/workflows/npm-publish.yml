@@ -48,7 +48,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=Nodejs-MSS \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://3.91.215.159:9000 \
+            -Dsonar.host.url=http://34.228.37.205:9000\
             -Dsonar.login=$SONAR_TOKEN
 
       - name: Upload Node.js Artifact to Nexus
