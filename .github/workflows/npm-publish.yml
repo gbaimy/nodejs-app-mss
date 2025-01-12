@@ -57,10 +57,15 @@ jobs:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: |
-          ARTIFACT=$(ls /var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/*.tgz)
-          curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \
-          --upload-file $ARTIFACT \
-          $NEXUS_URL/repository/your-repo-name/$ARTIFACT
+           ARTIFACT_DIR="/var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss"
+           ARTIFACT=$(ls $ARTIFACT_DIR/*.tgz 2>/dev/null || echo "")
+           if [ -z "$ARTIFACT" ]; then
+            echo "Error: No .tgz file found in $ARTIFACT_DIR. Please check the build process."
+            exit 1
+           fi
+           echo "Found artifact: $ARTIFACT"
+           curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \ --upload-file "$ARTIFACT" \"$NEXUS_URL/repository/nodejs-app-mss/$(basename $ARTIFACT)"
+           echo "Upload complete."
 
       - name: Run Node.js App
         run: |
