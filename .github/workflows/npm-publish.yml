@@ -57,7 +57,7 @@ jobs:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: |
-          ARTIFACT=$(ls *.tgz)
+          ARTIFACT=$(ls /var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/*.tgz)
           curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \
           --upload-file $ARTIFACT \
           $NEXUS_URL/repository/your-repo-name/$ARTIFACT
