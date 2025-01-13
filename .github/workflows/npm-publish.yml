@@ -48,7 +48,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=mss-project \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://34.228.37.205:9000\
+            -Dsonar.host.url=http://54.226.144.119:9000\
             -Dsonar.login=$SONAR_TOKEN
 
       - name: Upload Node.js Artifact to Nexus
@@ -57,7 +57,7 @@ jobs:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: |
-           ARTIFACT_DIR="/var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/*.tgz"
+           ARTIFACT_DIR="/var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/*.tgz*"
            ARTIFACT=$(ls $ARTIFACT_DIR/*.tgz 2>/dev/null || echo "")
            if [ -z "$ARTIFACT" ]; then
             echo "Error: No .tgz file found in $ARTIFACT_DIR. Please check the build process."
