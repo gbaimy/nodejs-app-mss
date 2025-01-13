@@ -50,7 +50,12 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://54.226.144.119:9000\
             -Dsonar.login=$SONAR_TOKEN
-
+            
+      - name: Package code into .tgz
+        run: |
+         tar -czf my-project.tar.gz .
+         echo "Generated .tgz file: $(pwd)/my-project.tar.gz"
+  
       - name: Upload Node.js Artifact to Nexus
         env:
           NEXUS_URL: ${{ secrets.NEXUS_URL }}
