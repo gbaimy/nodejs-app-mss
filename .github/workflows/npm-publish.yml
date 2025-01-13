@@ -54,7 +54,7 @@ jobs:
       - name: Prepare files for packaging
         run: |
          mkdir temp
-         cp -r ./* temp/
+         cp -r ./* temp2/
          echo "All files copied to temporary directory."
          
       - name: Create .tgz file
