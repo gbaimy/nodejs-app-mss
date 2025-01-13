@@ -53,7 +53,7 @@ jobs:
             
       - name: Package code into .tgz
         run: |
-         tar -czf my-project.tar.gz .
+         tar --warning=no-file-changed -czf my-project.tar.gz .
          echo "Generated .tgz file: $(pwd)/my-project.tar.gz"
   
       - name: Upload Node.js Artifact to Nexus
