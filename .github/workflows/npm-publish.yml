@@ -53,8 +53,10 @@ jobs:
             
       - name: Package code into .tgz
         run: |
-         tar -czf /var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/ -C temp .
-         echo "Generated artifact: /var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/"
+         mkdir -p temp
+         cp -r ./* temp/
+         tar -czf /var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/my-project.tgz -C temp .
+         echo "Generated artifact: /var/lib/jenkins/myrepodemos/mydemos/nodejs-app-mss/nodejs-app-mss/my-project.tgz"
           
       - name: Verify .tgz file
         run: |
