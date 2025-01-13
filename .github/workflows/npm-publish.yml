@@ -65,6 +65,7 @@ jobs:
         run: |
          ARTIFACT_DIR="."
          ARTIFACT=$(ls $ARTIFACT_DIR/*.tgz 2>/dev/null || echo "")
+         echo "Artifact: $ARTIFACT"
          if [ -z "$ARTIFACT" ]; then
           echo "Error: No .tgz file found in $ARTIFACT_DIR. Please check the build process."
           exit 1
@@ -75,7 +76,7 @@ jobs:
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          NEXUS_URL: ${{ secrets.NEXUS_URL }}
+          NEXUS_URL: ${{ secrets.NEXUS_SERVER_URL }}
         run: |
          curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$ARTIFACT" "$NEXUS_URL/repository/nodejs-app-mss/$(basename $ARTIFACT)"
          echo "Upload complete."
