@@ -53,9 +53,18 @@ jobs:
             
       - name: Package code into .tgz
         run: |
-         tar --warning=no-file-changed -czf my-project.tar.gz .
-         echo "Generated .tgz file: $(pwd)/my-project.tar.gz"
-  
+          tar -czf my-project.tgz -C temp .
+          echo "Generated artifact: $(pwd)/my-project.tgz"
+          
+      - name: Verify .tgz file
+        run: |
+         if [ -f my-project.tgz ]; then
+          echo "Packaging successful."
+         else
+          echo "Failed to create .tgz file!"
+          exit 1
+         fi
+         
       - name: Upload Node.js Artifact to Nexus
         env:
           NEXUS_URL: ${{ secrets.NEXUS_URL }}
