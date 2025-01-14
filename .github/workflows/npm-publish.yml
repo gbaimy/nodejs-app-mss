@@ -81,7 +81,7 @@ jobs:
          NEXUS_URL: ${{ secrets.NEXUS_SERVER_URL }}
         run: |
          echo "Uploading artifact: $TAR_FILE"
-         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$TAR_FILE" "$NEXUS_SERVER_URL/repository/nodejs-app-mss/$(basename $TAR_FILE)"
+         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$TAR_FILE" "$NEXUS_SERVER_URL/repository/MSS-NPM-PROJECT/$(basename $TAR_FILE)"
          echo "Upload complete."
       
       - name: Run Node.js App
