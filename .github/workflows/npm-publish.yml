@@ -48,7 +48,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=mss-project \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://54.226.144.119:9000\
+            -Dsonar.host.url=http://35.175.179.180:9000\
             -Dsonar.login=$SONAR_TOKEN
             
       - name: Prepare files for packaging
@@ -78,7 +78,7 @@ jobs:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           NEXUS_URL: ${{ secrets.NEXUS_SERVER_URL }}
         run: |
-         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$ARTIFACT" "$NEXUS_URL/repository/nodejs-app-mss/$(basename $ARTIFACT)"
+         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$ARTIFACT" "$NEXUS_SERVER_URL/repository/nodejs-app-mss/$(basename $ARTIFACT)"
          echo "Upload complete."
       
       - name: Run Node.js App
