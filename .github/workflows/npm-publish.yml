@@ -58,27 +58,31 @@ jobs:
          
       - name: Create .tgz file
         run: |
+         TAR_FILE="$(pwd)/my-project.tgz"
          tar -czf my-project.tgz -C temp .
-         echo "Generated artifact: $(pwd)/my-project.tgz"
+         echo "Generated artifact: $TAR_FILE"
+         echo "TAR_FILE=$TAR_FILE" >> $GITHUB_ENV
           
       - name: Verify .tgz file
         run: |
-         ARTIFACT_DIR="."
-         ARTIFACT=$(ls $ARTIFACT_DIR/*.tgz 2>/dev/null || echo "")
-         echo "Artifact: $ARTIFACT"
-         if [ -z "$ARTIFACT" ]; then
-          echo "Error: No .tgz file found in $ARTIFACT_DIR. Please check the build process."
+         if [ -f "$TAR_FILE" ]; then
+          echo "Packaging successful: $TAR_FILE"
+         else
+          echo "Failed to create .tgz file!"
           exit 1
          fi
-         echo "Found artifact: $ARTIFACT"
-         
+         env:
+         TAR_FILE: ${{ env.TAR_FILE }}
+        
       - name: Upload Node.js Artifact to Nexus
         env:
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          NEXUS_URL: ${{ secrets.NEXUS_SERVER_URL }}
+         TAR_FILE: ${{ env.TAR_FILE }}
+         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+         NEXUS_URL: ${{ secrets.NEXUS_SERVER_URL }}
         run: |
-         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$ARTIFACT" "$NEXUS_SERVER_URL/repository/nodejs-app-mss/$(basename $ARTIFACT)"
+         echo "Uploading artifact: $TAR_FILE"
+         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$TAR_FILE" "$NEXUS_SERVER_URL/repository/nodejs-app-mss/$(basename $TAR_FILE)"
          echo "Upload complete."
       
       - name: Run Node.js App
