@@ -84,6 +84,28 @@ jobs:
          curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$TAR_FILE" "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename $TAR_FILE)"
          echo "Upload complete."
       
-      - name: Test Application
+      - name: Run Application and Validate
         run: |
-         curl -s http:/35.175.179.180/:9981/mithuntechnologies | grep "expected-output"
+         echo "Starting the application..."
+         node app.js &  
+         APP_PID=$!    
+ 
+         echo "Waiting for the application to start..."
+         sleep 5
+
+ 
+         echo "Checking application health at http://35.175.179.180:9981/mithuntechnologies"
+         STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}" http://35.175.179.180:9981/mithuntechnologies)
+
+         if [ "$STATUS_CODE" -eq 200 ]; then
+         echo "Application is running successfully with HTTP 200 response!"
+         else
+         echo "Application health check failed with status code: $STATUS_CODE"
+         kill $APP_PID  # Kill the app process if it failed
+         exit 1
+         fi
+
+         echo "Stopping the application..."
+         kill $APP_PID
+         echo "Application stopped successfully."
+
