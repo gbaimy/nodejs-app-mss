@@ -84,6 +84,6 @@ jobs:
          curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$TAR_FILE" "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename $TAR_FILE)"
          echo "Upload complete."
       
-      - name: Run Node.js App
+      - name: Test Application
         run: |
-          npm start
+         curl -s http:/35.175.179.180/:9981/mithuntechnologies | grep "expected-output"
