@@ -61,7 +61,8 @@ jobs:
          TAR_FILE="$(pwd)/my-project.tgz"
          tar -czf my-project.tgz -C temp .
          echo "Generated artifact: $TAR_FILE"
-         echo "TAR_FILE: ${{ env.TAR_FILE }}"
+         echo "TAR_FILE=$TAR_FILE" >> $GITHUB_ENV
+
           
       - name: Verify .tgz file
         run: |
@@ -71,8 +72,6 @@ jobs:
           echo "Failed to create .tgz file!"
           exit 1
          fi
-         env:
-         TAR_FILE: ${{ env.TAR_FILE }}
         
       - name: Upload Node.js Artifact to Nexus
         env:
