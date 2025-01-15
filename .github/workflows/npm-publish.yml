@@ -48,7 +48,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=mss-project \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://35.175.179.180:9000\
+            -Dsonar.host.url=http://54.89.203.136:9000\
             -Dsonar.login=$SONAR_TOKEN
             
       - name: Prepare files for packaging
