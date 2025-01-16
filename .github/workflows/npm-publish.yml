@@ -107,7 +107,7 @@ jobs:
          NEXUS_URL="${NEXUS_URL%/}"
          curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
          --upload-file "$artifact_path" \
-         "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename "$artifact_path")"
+         "$NEXUS_URL $(basename "$artifact_path")"
          echo "Upload complete."
 
       - name: Run Application and Validate
