@@ -90,14 +90,17 @@ jobs:
 
       - name: Upload Node.js Artifact to Nexus
         env:
+         artifact_path: ${{ env.artifact_path }}
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
          NEXUS_URL: ${{ secrets.NEXUS_URL }}
         run: |
-         echo "Uploading artifact: $TAR_FILE"
-         curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file "$TAR_FILE" "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename $TAR_FILE)"
-         echo "Upload complete."
-      
+          if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ]; then
+          echo "Error: Nexus credentials or URL not configured!"
+          exit 1
+          fi
+          curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \ --upload-file "$artifact_path" \ "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename $artifact_path)"
+
       - name: Run Application and Validate
         run: |
          echo "Starting the application..."
