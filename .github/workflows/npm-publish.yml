@@ -59,7 +59,7 @@ jobs:
       - name: Create .tgz file
         run: |
          TAR_FILE="$(pwd)/my-project.tgz"
-         tar -czf my-project.tgz -C temp .
+         tar -czf my-project.tgz -C my-artifact .
          echo "Generated artifact: $TAR_FILE"
          echo "TAR_FILE=$TAR_FILE" >> $GITHUB_ENV
 
