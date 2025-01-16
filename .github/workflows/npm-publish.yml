@@ -53,7 +53,8 @@ jobs:
             
       - name: Prepare files for packaging
         run: |
-         mkdir temp
+         mkdir -p my-artifact
+         cp my-project.tgz my-artifact/
          echo "All files copied to temporary directory."
          
       - name: Create .tgz file
@@ -72,6 +73,12 @@ jobs:
           echo "Failed to create .tgz file!"
           exit 1
          fi
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+          path: my-artifact/my-project.tgz
         
       - name: Upload Node.js Artifact to Nexus
         env:
