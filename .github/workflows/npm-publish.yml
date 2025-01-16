@@ -95,10 +95,6 @@ jobs:
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
          NEXUS_URL: ${{ secrets.NEXUS_URL }}
         run: |
-          if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ]; then
-          echo "Error: Nexus credentials or URL not configured!"
-          exit 1
-          fi
           curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \ --upload-file "$artifact_path" \ "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename $artifact_path)"
 
       - name: Run Application and Validate
