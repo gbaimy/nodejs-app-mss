@@ -94,8 +94,21 @@ jobs:
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
          NEXUS_URL: ${{ secrets.NEXUS_URL }}
+  
         run: |
-          curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD \ --upload-file "$artifact_path" \ "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename $artifact_path)"
+         echo "Validating variables..."
+         echo "NEXUS_URL: $NEXUS_URL"
+         echo "artifact_path: $artifact_path"
+          if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ] || [ -z "$artifact_path" ]; then
+          echo "Error:One or more required variables are missing!"
+         exit 1
+          fi
+          
+         NEXUS_URL="${NEXUS_URL%/}"
+         curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
+         --upload-file "$artifact_path" \
+         "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename "$artifact_path")"
+         echo "Upload complete."
 
       - name: Run Application and Validate
         run: |
