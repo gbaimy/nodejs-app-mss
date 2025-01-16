@@ -50,38 +50,46 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://52.87.175.60:9000\
             -Dsonar.login=$SONAR_TOKEN
-            
-      - name: Prepare files for packaging
-        run: |
-         mkdir -p my-artifact
-         echo "All files copied to temporary directory."
-         
+          
       - name: Create .tgz file
         run: |
-         TAR_FILE="$(pwd)/my-project.tgz"
-         tar -czf my-project.tgz -C my-artifact .
-         echo "Generated artifact: $TAR_FILE"
-         echo "TAR_FILE=$TAR_FILE" >> $GITHUB_ENV
-
+         mkdir -p temp
+          cp -r ./* temp/
+          tar -czf my-project.tgz -C temp .
+          echo "Generated .tgz file: $(pwd)/my-project.tgz"
           
       - name: Verify .tgz file
         run: |
-         if [ -f "$TAR_FILE" ]; then
-          echo "Packaging successful: $TAR_FILE"
-         else
-          echo "Failed to create .tgz file!"
-          exit 1
-         fi
+         if [ -f my-project.tgz ]; then
+            echo "Packaging successful: $(pwd)/my-project.tgz"
+          else
+            echo "Error: .tgz file not found!"
+            exit 1
+          fi
+          
+      - name: Create artifact directory
+        run: |
+          mkdir -p my-artifact
+          echo "Created directory: $(pwd)/my-artifact"
+          
+      - name: Move .tgz file to artifact directory
+        run: |
+          mv my-project.tgz my-artifact/
+          echo "Moved artifact to: $(pwd)/my-artifact/my-project.tgz"
 
-      - name: Download Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: my-artifact
-          path: my-artifact/my-project.tgz
-        
+      - name: Find .tgz file
+        id: find-tgz
+        run: |
+          TGZ_FILE=$(find . -name "*.tgz" | head -n 1)
+          if [ -z "$TGZ_FILE" ]; then
+          echo "Error: No .tgz file found!"
+          exit 1
+          fi
+          echo "Found artifact: $TGZ_FILE"
+          echo "artifact_path=$TGZ_FILE" >> $GITHUB_ENV
+
       - name: Upload Node.js Artifact to Nexus
         env:
-         TAR_FILE: ${{ env.TAR_FILE }}
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
          NEXUS_URL: ${{ secrets.NEXUS_URL }}
