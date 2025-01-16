@@ -75,7 +75,7 @@ jobs:
          fi
 
       - name: Download Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: my-artifact
           path: my-artifact/my-project.tgz
