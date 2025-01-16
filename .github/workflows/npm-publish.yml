@@ -54,7 +54,7 @@ jobs:
       - name: Create .tgz file
         run: |
          mkdir -p temp
-          cp -r ./* temp/
+          rsync -av --exclude=temp ./ temp/
           tar -czf my-project.tgz -C temp .
           echo "Generated .tgz file: $(pwd)/my-project.tgz"
           
