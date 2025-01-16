@@ -54,7 +54,6 @@ jobs:
       - name: Prepare files for packaging
         run: |
          mkdir -p my-artifact
-         cp my-project.tgz my-artifact/
          echo "All files copied to temporary directory."
          
       - name: Create .tgz file
