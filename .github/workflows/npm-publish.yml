@@ -104,7 +104,7 @@ jobs:
          exit 1
           fi
           
-         NEXUS_URL="${NEXUS_URL%/}"
+         NEXUS_URL="${NEXUS_URL%}"
          curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
          --upload-file "$artifact_path" \
          "$NEXUS_URL $(basename "$artifact_path")"\
