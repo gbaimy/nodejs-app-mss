@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-
   pull_request:
     branches:
       - master
@@ -23,17 +22,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install unzip
-        run: sudo apt-get install -y unzip 
+        run: sudo apt-get install -y unzip
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.20.4
+          node-version: '18.20.4'
 
       - name: Install Dependencies
-        run: |
-          npm install
-      
+        run: npm install
+
       - name: Install SonarScanner
         run: |
           wget -qO- https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip -O /tmp/sonar-scanner.zip
@@ -48,30 +46,30 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=mss-project \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://52.87.175.60:9000\
+            -Dsonar.host.url=http://54.88.191.137:9000/
             -Dsonar.login=$SONAR_TOKEN
-          
+
       - name: Create .tgz file
         run: |
-         mkdir -p temp
+          mkdir -p temp
           rsync -av --exclude=temp ./ temp/
           tar -czf my-project.tgz -C temp .
           echo "Generated .tgz file: $(pwd)/my-project.tgz"
-          
+
       - name: Verify .tgz file
         run: |
-         if [ -f my-project.tgz ]; then
+          if [ -f my-project.tgz ]; then
             echo "Packaging successful: $(pwd)/my-project.tgz"
           else
             echo "Error: .tgz file not found!"
             exit 1
           fi
-          
+
       - name: Create artifact directory
         run: |
           mkdir -p my-artifact
           echo "Created directory: $(pwd)/my-artifact"
-          
+
       - name: Move .tgz file to artifact directory
         run: |
           mv my-project.tgz my-artifact/
@@ -80,46 +78,42 @@ jobs:
       - name: Find .tgz file
         id: find-tgz
         run: |
-          TGZ_FILE=$(find . -name "*.tgz" | head -n 1)
+          TGZ_FILE=$(find ./my-artifact -name "*.tgz" | head -n 1)
           if [ -z "$TGZ_FILE" ]; then
-          echo "Error: No .tgz file found!"
-          exit 1
+            echo "Error: No .tgz file found!"
+            exit 1
           fi
           echo "Found artifact: $TGZ_FILE"
           echo "artifact_path=$TGZ_FILE" >> $GITHUB_ENV
 
       - name: Upload Node.js Artifact to Nexus
         env:
-         artifact_path: ${{ env.artifact_path }}
-         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-         NEXUS_URL: ${{ secrets.NEXUS_URL }}
-  
+          artifact_path: ${{ env.artifact_path }}
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_URL: ${{ secrets.NEXUS_URL }}
         run: |
-         echo "Validating variables..."
-         echo "NEXUS_URL: $NEXUS_URL"
-         echo "artifact_path: $artifact_path"
+          echo "Validating variables..."
           if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ] || [ -z "$artifact_path" ]; then
-          echo "Error:One or more required variables are missing!"
-         exit 1
+            echo "Error: One or more required variables are missing!"
+            exit 1
           fi
-          
+
           if [ ! -f "$artifact_path" ]; then
-          echo "Error: Artifact not found at $artifact_path"
-          exit 1
+            echo "Error: Artifact not found at $artifact_path"
+            exit 1
           fi
- 
-         NEXUS_URL="${NEXUS_URL%}"
-         curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
-             --upload-file "$artifact_path" \
-             "$NEXUS_URL/repository/MSS-NPM-PROJECT/ $(basename "$artifact_path")"
-              echo "Upload complete."
+
+          NEXUS_URL="${NEXUS_URL%/}"
+          curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
+            --upload-file "$artifact_path" \
+            "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename "$artifact_path")"
+          echo "Upload complete."
 
       - name: Run Application and Validate
         run: |
-         echo "Starting the application..."
-         node app.js &  
-         APP_PID=$!    
- 
-     
-
+          echo "Starting the application..."
+          node app.js &
+          APP_PID=$!
+          sleep 5
+         
