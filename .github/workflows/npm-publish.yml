@@ -46,7 +46,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=mss-project \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://54.88.191.137:9000/
+            -Dsonar.host.url=http://54.88.191.137:9000\
             -Dsonar.login=$SONAR_TOKEN
 
       - name: Create .tgz file
