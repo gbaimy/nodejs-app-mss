@@ -48,3 +48,42 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://52.91.43.172:9000\
             -Dsonar.login=$SONAR_TOKEN
+
+  package:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create .tgz file
+        run: |
+          mkdir -p temp
+          rsync -av --exclude=temp ./ temp/
+          tar -czf my-project.tgz -C temp .
+          echo "Generated .tgz file: $(pwd)/my-project.tgz"
+
+      - name: Verify .tgz file
+        run: |
+          if [ -f my-project.tgz ]; then
+            echo "Packaging successful: $(pwd)/my-project.tgz"
+          else
+            echo "Error: .tgz file not found!"
+            exit 1
+          fi
+
+      - name: Create artifact directory
+        run: mkdir -p my-artifact
+
+      - name: Move .tgz file to artifact directory
+        run: mv my-project.tgz my-artifact/
+
+      - name: Save artifact for upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: my-artifact/
+  
+
+
+  
