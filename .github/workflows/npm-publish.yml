@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+build:
     runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 17
@@ -49,7 +49,7 @@ jobs:
             -Dsonar.host.url=http://52.91.43.172:9000\
             -Dsonar.login=$SONAR_TOKEN
 
-  package:
+    package:
       needs: build
       runs-on: ubuntu-latest
       steps:
@@ -84,11 +84,11 @@ jobs:
           name: my-artifact
           path: my-artifact
           
-uploads:
-  needs: package
-  runs-on: ubuntu-latest
-  steps:
-    - name: Unzip artifact from specified path
+    upload_artifact:
+      needs: package
+      runs-on: ubuntu-latest
+      steps:
+      - name: Unzip artifact from specified path
       run: |
         artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss -name "*.zip" | head -n 1)
         if [ -z "$artifact_path" ]; then
@@ -100,27 +100,27 @@ uploads:
         unzip "$artifact_path" -d extracted-artifact
         echo "Artifact extracted to: $(pwd)/extracted-artifact"
 
-    - name: Upload Node.js Artifact to Nexus
+        - name: Upload Node.js Artifact to Nexus
       env:
         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         NEXUS_URL: ${{ secrets.NEXUS_URL }}
-      run: |
-        artifact_path=$(find ./extracted-artifact -name "*.tgz" | head -n 1)
-        if [ -z "$artifact_path" ]; then
+        run: |
+         artifact_path=$(find ./extracted-artifact -name "*.tgz" | head -n 1)
+         if [ -z "$artifact_path" ]; then
           echo "Error: No .tgz file found in extracted-artifact directory."
           exit 1
-        else
+         else
           echo "Found artifact: $artifact_path"
-        fi
+         fi
 
-        if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ]; then
+         if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ]; then
           echo "Error: Missing Nexus credentials or URL."
           exit 1
-        fi
+         fi
 
-        NEXUS_URL="${NEXUS_URL%/}"
-        curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
+         NEXUS_URL="${NEXUS_URL%/}"
+         curl -u "$NEXUS_USERNAME:$NEXUS_PASSWORD" \
           --upload-file "$artifact_path" \
           "$NEXUS_URL/repository/MSS-NPM-PROJECT/$(basename "$artifact_path")"
-        echo "Upload complete."
+         echo "Upload complete."
