@@ -32,6 +32,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Install SonarScanner
+        run: |
+          wget -qO- https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip -O /tmp/sonar-scanner.zip
+          unzip /tmp/sonar-scanner.zip -d /tmp
+          echo "/tmp/sonar-scanner-5.0.1.3006-linux/bin" >> $GITHUB_PATH
+
       - name: SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
