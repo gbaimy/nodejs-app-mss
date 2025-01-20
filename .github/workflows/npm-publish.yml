@@ -88,18 +88,6 @@ jobs:
     needs: package
     runs-on: ubuntu-latest
     steps:
-      - name: Unzip artifact from specified path
-        run: |
-          artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss -name "*.zip" | head -n 1)
-          if [ -z "$artifact_path" ]; then
-            echo "Error: No .zip file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss"
-            exit 1
-          fi
-          echo "Found artifact to unzip: $artifact_path"
-          mkdir -p extracted-artifact
-          unzip "$artifact_path" -d extracted-artifact
-          echo "Artifact extracted to: $(pwd)/extracted-artifact"
-
       - name: Upload Node.js Artifact to Nexus
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
