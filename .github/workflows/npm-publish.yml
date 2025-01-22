@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: my-artifact
+          path: my-project.tgz
 
   upload_artifact:
     needs: package
@@ -94,9 +94,9 @@ jobs:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           NEXUS_URL: ${{ secrets.NEXUS_URL }}
         run: |
-          artifact_path=$(find https://github.com/gbaimy/nodejs-app-mss/actions/runs/12906156087/artifacts/2467117370 "*.tgz" | head -n 1)
+          artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss -name "*.tgz" | head -n 1)
           if [ -z "$artifact_path" ]; then
-            echo "Error: No .tgz file found in https://github.com/gbaimy/nodejs-app-mss/actions/runs/12906156087/artifacts/2467117370/home/runner/work/nodejs-app-mss/nodejs-app-mss"
+            echo "Error: No .tgz file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss"
             exit 1
           else
             echo "Found artifact: $artifact_path"
