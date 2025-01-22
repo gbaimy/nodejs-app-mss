@@ -58,10 +58,10 @@ jobs:
 
       - name: Create .tgz file
         run: |
-          mkdir -p temp
-          rsync -av --exclude=temp ./ temp/
-          tar -czf my-project.tgz -C temp .
-          echo "Generated .tgz file: $(pwd)/my-project.tgz"
+         mkdir -p /home/runner/work/nodejs-app-mss/nodejs-app-mss/temp
+         rsync -av --exclude=temp ./ /home/runner/work/nodejs-app-mss/nodejs-app-mss/temp/
+         tar -czf /home/runner/work/nodejs-app-mss/nodejs-app-mss/my-project.tgz -C /home/runner/work/nodejs-app-mss/nodejs-app-mss/temp .
+         echo "Generated .tgz file: /home/runner/work/nodejs-app-mss/nodejs-app-mss/my-project.tgz"
 
       - name: Verify .tgz file
         run: |
