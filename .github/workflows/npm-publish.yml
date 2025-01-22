@@ -78,12 +78,6 @@ jobs:
           name: my-artifact
           path: /home/runner/work/nodejs-app-mss/nodejs-app-mss/my-project.tgz
 
-   name: Retrieve and Extract Artifact
-
-on:
-  workflow_dispatch:
-
-jobs:
   retrieve_artifact:
     runs-on: ubuntu-latest
     steps:
@@ -119,6 +113,7 @@ jobs:
           else
             echo "Artifact extracted to: $OUTPUT_DIR"
           fi
+
   upload_artifact:
     needs: package
     runs-on: ubuntu-latest
@@ -131,7 +126,7 @@ jobs:
         run: |
           artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact -name  "*.tgz" | head -n 1)
           if [ -z "$artifact_path" ]; then
-            echo "Error: No .tgz file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact -name "
+            echo "Error: No .tgz file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact"
             exit 1
           else
             echo "Found artifact: $artifact_path"
