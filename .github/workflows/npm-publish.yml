@@ -78,31 +78,46 @@ jobs:
           name: my-artifact
           path: /home/runner/work/nodejs-app-mss/nodejs-app-mss/my-project.tgz
 
+   name: Retrieve and Extract Artifact
+
+on:
+  workflow_dispatch:
+
+jobs:
   retrieve_artifact:
-    needs: package
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact from GitHub Actions
+      - name: Create artifact download directory
+        run: |
+          mkdir -p /home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact
+
+      - name: Download artifact
         run: |
           ARTIFACT_URL="https://github.com/gbaimy/nodejs-app-mss/actions/runs/12906227635/artifacts/2467137616"
-          OUTPUT_DIR="/home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact"
-          mkdir -p $OUTPUT_DIR
-          curl -L -o $OUTPUT_DIR/my-artifact.zip $ARTIFACT_URL
-          echo "Artifact downloaded to: $OUTPUT_DIR/my-artifact.zip"
-
-      - name: Extract Artifact
-        run: |
-          unzip /home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip -d /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact
-          echo "Artifact extracted to: /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact"
-
-      - name: Locate .tgz file in extracted artifact
-        run: |
-          artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact -name "*.tgz" | head -n 1)
-          if [ -z "$artifact_path" ]; then
-            echo "Error: No .tgz file found in extracted artifact directory."
+          OUTPUT_FILE="/home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip"
+          curl -L -o "$OUTPUT_FILE" "$ARTIFACT_URL"
+          if [ ! -f "$OUTPUT_FILE" ]; then
+            echo "Error: Artifact download failed."
             exit 1
           else
-            echo "Found .tgz file: $artifact_path"
+            echo "Artifact downloaded successfully: $OUTPUT_FILE"
+          fi
+
+      - name: Verify downloaded artifact file type
+        run: |
+          file /home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip
+
+      - name: Extract artifact
+        run: |
+          INPUT_FILE="/home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip"
+          OUTPUT_DIR="/home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact"
+          mkdir -p "$OUTPUT_DIR"
+          unzip "$INPUT_FILE" -d "$OUTPUT_DIR"
+          if [ $? -ne 0 ]; then
+            echo "Error: Failed to extract artifact."
+            exit 1
+          else
+            echo "Artifact extracted to: $OUTPUT_DIR"
           fi
   upload_artifact:
     needs: package
