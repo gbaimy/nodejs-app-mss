@@ -88,7 +88,7 @@ jobs:
       - name: Download Artifact from GitHub Actions
         run: |
           ARTIFACT_URL="https://github.com/gbaimy/nodejs-app-mss/actions/runs/12907530897/artifacts/2467541366"
-          OUTPUT_FILE="/home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip"
+          OUTPUT_FILE="/home/runner/work/nodejs-app-mss/nodejs-app-mss/my-artifact.zip"
           curl -L -o "$OUTPUT_FILE" "$ARTIFACT_URL"
           if [ ! -f "$OUTPUT_FILE" ]; then
             echo "Error: Artifact download failed."
