@@ -46,7 +46,7 @@ jobs:
           sonar-scanner \
             -Dsonar.projectKey=mss-project \
             -Dsonar.sources=. \
-            -Dsonar.host.url=http://52.91.43.172:9000\
+            -Dsonar.host.url=http://54.90.247.217:9000 \
             -Dsonar.login=$SONAR_TOKEN
 
   package:
@@ -88,19 +88,19 @@ jobs:
     needs: package
     runs-on: ubuntu-latest
     steps:
-      name: Upload Node.js Artifact to Nexus
-      env:
-        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-        NEXUS_URL: ${{ secrets.NEXUS_URL }}
-      run: |
-        artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss -name "*.tgz" | head -n 1)
-        if [ -z "$artifact_path" ]; then
-          echo "Error: No .tgz file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss"
-          exit 1
-        else
-          echo "Found artifact: $artifact_path"
-        fi
+      - name: Upload Node.js Artifact to Nexus
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_URL: ${{ secrets.NEXUS_URL }}
+        run: |
+          artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss -name "*.tgz" | head -n 1)
+          if [ -z "$artifact_path" ]; then
+            echo "Error: No .tgz file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss"
+            exit 1
+          else
+            echo "Found artifact: $artifact_path"
+          fi
 
           if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ]; then
             echo "Error: Missing Nexus credentials or URL."
