@@ -94,9 +94,9 @@ jobs:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           NEXUS_URL: ${{ secrets.NEXUS_URL }}
         run: |
-          artifact_path=$(find /my-artifact/ "*.tgz" | head -n 1)
+          artifact_path=$(find /home/runner/work/<repository>/<repository>/my-artifact.zip "*.tgz" | head -n 1)
           if [ -z "$artifact_path" ]; then
-            echo "Error: No .tgz file found in /my-artifact/"
+            echo "Error: No .tgz file found in /home/runner/work/<repository>/<repository>/my-artifact.zip"
             exit 1
           else
             echo "Found artifact: $artifact_path"
