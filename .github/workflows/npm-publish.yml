@@ -78,60 +78,29 @@ jobs:
           name: my-artifact
           path: /home/runner/work/nodejs-app-mss/nodejs-app-mss/my-project.tgz
 
-  retrieve_artifact:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create artifact download directory
-        run: |
-          mkdir -p /home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact
-
-      - name: Download artifact
-        run: |
-          ARTIFACT_URL="https://github.com/gbaimy/nodejs-app-mss/actions/runs/12906227635/artifacts/2467137616"
-          OUTPUT_FILE="/home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip"
-          curl -L -o "$OUTPUT_FILE" "$ARTIFACT_URL"
-          if [ ! -f "$OUTPUT_FILE" ]; then
-            echo "Error: Artifact download failed."
-            exit 1
-          else
-            echo "Artifact downloaded successfully: $OUTPUT_FILE"
-          fi
-
-      - name: Verify downloaded artifact file type
-        run: |
-          file /home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip
-
-      - name: Extract artifact
-        run: |
-          INPUT_FILE="/home/runner/work/nodejs-app-mss/nodejs-app-mss/downloaded-artifact/my-artifact.zip"
-          OUTPUT_DIR="/home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact"
-          mkdir -p "$OUTPUT_DIR"
-          unzip "$INPUT_FILE" -d "$OUTPUT_DIR"
-          if [ $? -ne 0 ]; then
-            echo "Error: Failed to extract artifact."
-            exit 1
-          else
-            echo "Artifact extracted to: $OUTPUT_DIR"
-          fi
-
   upload_artifact:
     needs: package
     runs-on: ubuntu-latest
     steps:
-      - name: Upload Node.js Artifact to Nexus
-        env:
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          NEXUS_URL: ${{ secrets.NEXUS_URL }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find the .tgz file
         run: |
-          artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact -name "*.tgz" | head -n 1)
+          artifact_path=$(find /home/runner/work/nodejs-app-mss/nodejs-app-mss -name "*.tgz" | head -n 1)
           if [ -z "$artifact_path" ]; then
-            echo "Error: No .tgz file found in /home/runner/work/nodejs-app-mss/nodejs-app-mss/extracted-artifact"
+            echo "Error: No .tgz file found!"
             exit 1
           else
             echo "Found artifact: $artifact_path"
           fi
 
+      - name: Upload .tgz Artifact to Nexus
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_URL: ${{ secrets.NEXUS_URL }}
+        run: |
           if [ -z "$NEXUS_URL" ] || [ -z "$NEXUS_USERNAME" ] || [ -z "$NEXUS_PASSWORD" ]; then
             echo "Error: Missing Nexus credentials or URL."
             exit 1
